@@ -70,9 +70,9 @@ class ArrayListTest extends TestCase
     {
         $this->list->add(20);
         $this->list->add(30);
-        
+
         $this->list->insert(0, 10);
-        
+
         $this->assertEquals(3, $this->list->count());
         $this->assertEquals(10, $this->list->get(0));
         $this->assertEquals(20, $this->list->get(1));
@@ -86,9 +86,9 @@ class ArrayListTest extends TestCase
     {
         $this->list->add(10);
         $this->list->add(30);
-        
+
         $this->list->insert(1, 20);
-        
+
         $this->assertEquals(3, $this->list->count());
         $this->assertEquals(10, $this->list->get(0));
         $this->assertEquals(20, $this->list->get(1));
@@ -102,9 +102,9 @@ class ArrayListTest extends TestCase
     {
         $this->list->add(10);
         $this->list->add(20);
-        
+
         $this->list->insert(2, 30);
-        
+
         $this->assertEquals(3, $this->list->count());
         $this->assertEquals(30, $this->list->get(2));
     }
@@ -148,7 +148,7 @@ class ArrayListTest extends TestCase
         $this->list->add(30);
 
         $removed = $this->list->removeAt(1);
-        
+
         $this->assertEquals(20, $removed);
         $this->assertEquals(2, $this->list->count());
         $this->assertEquals(10, $this->list->get(0));
@@ -165,7 +165,7 @@ class ArrayListTest extends TestCase
         $this->list->add(30);
 
         $removed = $this->list->removeAt(0);
-        
+
         $this->assertEquals(10, $removed);
         $this->assertEquals(2, $this->list->count());
         $this->assertEquals(20, $this->list->get(0));
@@ -181,7 +181,7 @@ class ArrayListTest extends TestCase
         $this->list->add(30);
 
         $removed = $this->list->removeAt(2);
-        
+
         $this->assertEquals(30, $removed);
         $this->assertEquals(2, $this->list->count());
         $this->assertEquals(20, $this->list->get(1));
@@ -221,7 +221,7 @@ class ArrayListTest extends TestCase
     public function testCount(): void
     {
         $this->assertEquals(0, $this->list->count());
-        
+
         for ($i = 1; $i <= 5; $i++) {
             $this->list->add($i);
             $this->assertEquals($i, $this->list->count());
@@ -262,7 +262,7 @@ class ArrayListTest extends TestCase
     {
         $stringList = new ArrayList('string');
         $dataset = ListDataset::getSmallStringDataset();
-        
+
         foreach ($dataset as $item) {
             $stringList->add($item);
         }
@@ -294,13 +294,13 @@ class ArrayListTest extends TestCase
     public function testLargeDataset(): void
     {
         $dataset = ListDataset::getLargeIntegerDataset(100);
-        
+
         foreach ($dataset as $item) {
             $this->list->add($item);
         }
 
         $this->assertEquals(100, $this->list->count());
-        
+
         // Verify some random elements
         $this->assertEquals($dataset[0], $this->list->get(0));
         $this->assertEquals($dataset[50], $this->list->get(50));
@@ -313,7 +313,7 @@ class ArrayListTest extends TestCase
     public function testGetOutOfBounds(): void
     {
         $this->list->add(10);
-        
+
         $this->expectException(\OutOfBoundsException::class);
         $this->list->get(5);
     }
