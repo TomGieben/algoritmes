@@ -31,7 +31,7 @@ class BinarySearchTest extends TestCase
     public function testSearchSingleElement(): void
     {
         $array = [42];
-        
+
         $this->assertEquals(0, $this->binarySearch->search($array, 42));
         $this->assertEquals(-1, $this->binarySearch->search($array, 10));
     }
@@ -80,7 +80,7 @@ class BinarySearchTest extends TestCase
     public function testSearchWithDuplicates(): void
     {
         $array = [1, 3, 5, 5, 5, 7, 9];
-        
+
         // Standard search should find one of the 5's
         $result = $this->binarySearch->search($array, 5);
         $this->assertGreaterThanOrEqual(0, $result);
@@ -93,7 +93,7 @@ class BinarySearchTest extends TestCase
     public function testSearchLeftmostWithDuplicates(): void
     {
         $array = [1, 3, 5, 5, 5, 7, 9];
-        
+
         $result = $this->binarySearch->searchLeftmost($array, 5);
         $this->assertEquals(2, $result);
     }
@@ -104,7 +104,7 @@ class BinarySearchTest extends TestCase
     public function testSearchRightmostWithDuplicates(): void
     {
         $array = [1, 3, 5, 5, 5, 7, 9];
-        
+
         $result = $this->binarySearch->searchRightmost($array, 5);
         $this->assertEquals(4, $result);
     }
@@ -115,7 +115,7 @@ class BinarySearchTest extends TestCase
     public function testSearchNegativeNumbers(): void
     {
         $array = [-10, -5, -3, 0, 3, 5, 10];
-        
+
         $this->assertEquals(0, $this->binarySearch->search($array, -10));
         $this->assertEquals(3, $this->binarySearch->search($array, 0));
         $this->assertEquals(6, $this->binarySearch->search($array, 10));
@@ -127,7 +127,7 @@ class BinarySearchTest extends TestCase
     public function testSearchFloats(): void
     {
         $array = [1.1, 2.2, 3.3, 4.4, 5.5];
-        
+
         $this->assertEquals(0, $this->binarySearch->search($array, 1.1));
         $this->assertEquals(2, $this->binarySearch->search($array, 3.3));
         $this->assertEquals(-1, $this->binarySearch->search($array, 3.0));
@@ -139,7 +139,7 @@ class BinarySearchTest extends TestCase
     public function testSearchStrings(): void
     {
         $array = ['apple', 'banana', 'cherry', 'date', 'elderberry'];
-        
+
         $this->assertEquals(0, $this->binarySearch->search($array, 'apple'));
         $this->assertEquals(2, $this->binarySearch->search($array, 'cherry'));
         $this->assertEquals(4, $this->binarySearch->search($array, 'elderberry'));
@@ -152,9 +152,9 @@ class BinarySearchTest extends TestCase
     public function testSearchDescendingWithComparator(): void
     {
         $array = [13, 11, 9, 7, 5, 3, 1];
-        
+
         $descComparator = fn($a, $b) => $a > $b ? -1 : ($a < $b ? 1 : 0);
-        
+
         $this->assertEquals(0, $this->binarySearch->search($array, 13, $descComparator));
         $this->assertEquals(3, $this->binarySearch->search($array, 7, $descComparator));
         $this->assertEquals(6, $this->binarySearch->search($array, 1, $descComparator));
@@ -166,7 +166,7 @@ class BinarySearchTest extends TestCase
     public function testFindInsertionPositionNotPresent(): void
     {
         $array = [1, 3, 5, 7, 9];
-        
+
         $this->assertEquals(0, $this->binarySearch->findInsertionPosition($array, 0));
         $this->assertEquals(1, $this->binarySearch->findInsertionPosition($array, 2));
         $this->assertEquals(3, $this->binarySearch->findInsertionPosition($array, 6));
@@ -179,7 +179,7 @@ class BinarySearchTest extends TestCase
     public function testFindInsertionPositionPresent(): void
     {
         $array = [1, 3, 5, 7, 9];
-        
+
         $this->assertEquals(0, $this->binarySearch->findInsertionPosition($array, 1));
         $this->assertEquals(2, $this->binarySearch->findInsertionPosition($array, 5));
         $this->assertEquals(4, $this->binarySearch->findInsertionPosition($array, 9));
@@ -225,7 +225,7 @@ class BinarySearchTest extends TestCase
     public function testSearchAssociativeArray(): void
     {
         $array = ['a' => 1, 'b' => 3, 'c' => 5, 'd' => 7];
-        
+
         $this->assertEquals(0, $this->binarySearch->search($array, 1));
         $this->assertEquals(2, $this->binarySearch->search($array, 5));
         $this->assertEquals(-1, $this->binarySearch->search($array, 4));
@@ -237,10 +237,10 @@ class BinarySearchTest extends TestCase
     public function testSearchCaseInsensitiveStrings(): void
     {
         $array = ['apple', 'BANANA', 'cherry', 'DATE'];
-        
-        $caseInsensitiveComparator = fn($a, $b) => 
-            strcasecmp((string)$a, (string)$b);
-        
+
+        $caseInsensitiveComparator = fn($a, $b) =>
+        strcasecmp((string)$a, (string)$b);
+
         $this->assertEquals(0, $this->binarySearch->search($array, 'APPLE', $caseInsensitiveComparator));
         $this->assertEquals(1, $this->binarySearch->search($array, 'banana', $caseInsensitiveComparator));
         $this->assertEquals(2, $this->binarySearch->search($array, 'CHERRY', $caseInsensitiveComparator));
@@ -252,7 +252,7 @@ class BinarySearchTest extends TestCase
     public function testInsertionPositionWithDuplicates(): void
     {
         $array = [1, 3, 5, 5, 5, 7, 9];
-        
+
         // Should insert at the leftmost position among duplicates or before the first
         $position = $this->binarySearch->findInsertionPosition($array, 5);
         $this->assertGreaterThanOrEqual(2, $position);

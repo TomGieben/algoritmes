@@ -60,7 +60,7 @@ class Dijkstra implements PathfinderInterface
         }
 
         $vertices = $this->graph->getVertices();
-        
+
         // Initialize distances and previous vertices tracking
         $distances = [];
         $previous = [];
@@ -94,7 +94,7 @@ class Dijkstra implements PathfinderInterface
 
                 if (!$visited[$neighbor]) {
                     $newDistance = $distances[$currentVertex] + $weight;
-                    
+
                     if ($newDistance < $distances[$neighbor]) {
                         $distances[$neighbor] = $newDistance;
                         $previous[$neighbor] = $currentVertex;

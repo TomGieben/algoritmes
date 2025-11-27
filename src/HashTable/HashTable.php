@@ -219,7 +219,7 @@ class HashTable implements HashTableInterface
     {
         // FNV offset basis
         $hash = 2166136261;
-        
+
         // FNV prime
         $prime = 16777619;
 
@@ -284,11 +284,11 @@ class HashTable implements HashTableInterface
                 $stats['non_empty_buckets']++;
                 $chainLength = count($bucket);
                 $stats['total_chain_length'] += $chainLength;
-                
+
                 if ($chainLength > 1) {
                     $stats['collision_buckets']++;
                 }
-                
+
                 if ($chainLength > $stats['max_chain_length']) {
                     $stats['max_chain_length'] = $chainLength;
                 }

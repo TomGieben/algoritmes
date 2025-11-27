@@ -4,8 +4,72 @@ declare(strict_types=1);
 
 namespace Algoritmes\Datasets;
 
-class ListDataset
+/**
+ * Generic list dataset that can load any CSV file
+ * Also provides static helper methods for generating test data
+ */
+class ListDataset extends AbstractDataset
 {
+    /**
+     * Column to use as primary data column
+     */
+    private ?string $primaryColumn = null;
+
+    /**
+     * Custom file path (empty string means no file)
+     */
+    private string $customFilePath = '';
+
+    public function __construct(?string $filePath = null)
+    {
+        $this->customFilePath = $filePath ?? '';
+        parent::__construct($filePath);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDefaultFilePath(): string
+    {
+        return $this->customFilePath;
+    }
+
+    /**
+     * Set the primary column to use for getData()
+     */
+    public function setPrimaryColumn(string $column): self
+    {
+        $this->primaryColumn = $column;
+        return $this;
+    }
+
+    /**
+     * Get data from the primary column, or all data if not set
+     */
+    public function getData(): array
+    {
+        if ($this->primaryColumn !== null) {
+            return $this->getColumn($this->primaryColumn);
+        }
+        return $this->toArray();
+    }
+
+    /**
+     * Create a ListDataset from an array of data
+     */
+    public static function fromArray(array $data, array $columns = []): self
+    {
+        $dataset = new self();
+        $dataset->data = $data;
+        $dataset->columns = $columns;
+        $dataset->loaded = true;
+        return $dataset;
+    }
+
+    // ========================================
+    // Static helper methods for test data
+    // ========================================
+
     /**
      * Get a dataset with integer values for testing
      */
@@ -78,5 +142,21 @@ class ListDataset
             $dataset[] = mt_rand(1, 10000);
         }
         return $dataset;
+    }
+
+    /**
+     * Get a sorted dataset for search testing
+     */
+    public static function getSortedIntegerDataset(): array
+    {
+        return [1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
+    }
+
+    /**
+     * Get a sorted string dataset for search testing
+     */
+    public static function getSortedStringDataset(): array
+    {
+        return ['apple', 'banana', 'cherry', 'date', 'fig', 'grape', 'kiwi', 'lemon'];
     }
 }

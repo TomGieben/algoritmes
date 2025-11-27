@@ -93,7 +93,7 @@ class DijkstraTest extends TestCase
     public function testStartToSameVertex(): void
     {
         $this->graph->addVertex('A');
-        
+
         $result = $this->dijkstra->findPath('A', 'A');
         $this->assertEquals(['A'], $result['path']);
         $this->assertEquals(0, $result['distance']);
@@ -223,13 +223,13 @@ class DijkstraTest extends TestCase
 
         $this->assertTrue($detailed['A']['reachable']);
         $this->assertEquals(0, $detailed['A']['distance']);
-        
+
         $this->assertTrue($detailed['B']['reachable']);
         $this->assertEquals(1, $detailed['B']['distance']);
-        
+
         $this->assertTrue($detailed['C']['reachable']);
         $this->assertEquals(3, $detailed['C']['distance']);
-        
+
         $this->assertFalse($detailed['D']['reachable']);
         $this->assertEquals('unreachable', $detailed['D']['distance']);
     }
@@ -251,10 +251,10 @@ class DijkstraTest extends TestCase
 
         $this->assertArrayHasKey('B', $paths);
         $this->assertArrayHasKey('C', $paths);
-        
+
         $this->assertEquals(['A', 'B'], $paths['B']['path']);
         $this->assertEquals(1, $paths['B']['distance']);
-        
+
         $this->assertEquals(['A', 'B', 'C'], $paths['C']['path']);
         $this->assertEquals(3, $paths['C']['distance']);
     }
@@ -294,7 +294,7 @@ class DijkstraTest extends TestCase
     public function testInvalidEndVertex(): void
     {
         $this->graph->addVertex('A');
-        
+
         $this->expectException(\InvalidArgumentException::class);
         $this->dijkstra->findPath('A', 'X');
     }
@@ -318,8 +318,8 @@ class DijkstraTest extends TestCase
         $this->assertEquals(2, $result['distance']);
         // One of the paths should be found
         $this->assertTrue(
-            $result['path'] === ['A', 'B', 'D'] || 
-            $result['path'] === ['A', 'C', 'D']
+            $result['path'] === ['A', 'B', 'D'] ||
+                $result['path'] === ['A', 'C', 'D']
         );
     }
 
@@ -371,7 +371,7 @@ class DijkstraTest extends TestCase
         $this->assertTrue($this->graph->hasVertex('B'));
         $this->assertTrue($this->graph->hasEdge('A', 'B'));
         $this->assertFalse($this->graph->hasEdge('B', 'A'));
-        
+
         $this->assertEquals(2, $this->graph->getVertexCount());
         $this->assertEquals(1, $this->graph->getEdgeCount());
     }

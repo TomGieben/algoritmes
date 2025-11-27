@@ -13,6 +13,5 @@ class Edge
         public string $from,
         public string $to,
         public float $weight
-    ) {
-    }
+    ) {}
 }

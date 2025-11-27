@@ -24,7 +24,7 @@ class BinarySearch extends AbstractSearcher
     public function search(array $array, mixed $target, ?callable $comparator = null): int
     {
         $comparator = $this->getComparator($comparator);
-        
+
         if (empty($array)) {
             return -1;
         }
@@ -81,7 +81,7 @@ class BinarySearch extends AbstractSearcher
     public function searchLeftmost(array $array, mixed $target, ?callable $comparator = null): int
     {
         $comparator = $this->getComparator($comparator);
-        
+
         if (empty($array)) {
             return -1;
         }
@@ -120,7 +120,7 @@ class BinarySearch extends AbstractSearcher
     public function searchRightmost(array $array, mixed $target, ?callable $comparator = null): int
     {
         $comparator = $this->getComparator($comparator);
-        
+
         if (empty($array)) {
             return -1;
         }
@@ -160,7 +160,7 @@ class BinarySearch extends AbstractSearcher
     public function findInsertionPosition(array $array, mixed $target, ?callable $comparator = null): int
     {
         $comparator = $this->getComparator($comparator);
-        
+
         if (empty($array)) {
             return 0;
         }
