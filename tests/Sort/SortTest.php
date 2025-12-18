@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Algoritmes\Tests\Sort;
 
-use PHPUnit\Framework\TestCase;
+use Algoritmes\Lists\ArrayList;
+use Algoritmes\Lists\Interfaces\ListInterface;
 use Algoritmes\Sort\MergeSort;
 use Algoritmes\Sort\QuickSort;
+use PHPUnit\Framework\TestCase;
 
 class SortTest extends TestCase
 {
@@ -22,11 +24,13 @@ class SortTest extends TestCase
     /**
      * Test sorting empty array
      */
-    public function testSortEmptyArray(): void
+    public function testSortEmptyList(): void
     {
-        $array = [];
-        $this->assertEquals([], $this->mergeSort->sort($array));
-        $this->assertEquals([], $this->quickSort->sort($array));
+        $listForMerge = $this->createList([]);
+        $listForQuick = $this->createList([]);
+
+        $this->assertEquals([], $this->listToArray($this->mergeSort->sort($listForMerge)));
+        $this->assertEquals([], $this->listToArray($this->quickSort->sort($listForQuick)));
     }
 
     /**
@@ -34,9 +38,9 @@ class SortTest extends TestCase
      */
     public function testSortSingleElement(): void
     {
-        $array = [42];
-        $this->assertEquals([42], $this->mergeSort->sort($array));
-        $this->assertEquals([42], $this->quickSort->sort($array));
+        $values = [42];
+        $this->assertEquals([42], $this->listToArray($this->mergeSort->sort($this->createList($values))));
+        $this->assertEquals([42], $this->listToArray($this->quickSort->sort($this->createList($values))));
     }
 
     /**
@@ -44,9 +48,9 @@ class SortTest extends TestCase
      */
     public function testSortAlreadySorted(): void
     {
-        $array = [1, 2, 3, 4, 5];
-        $this->assertEquals([1, 2, 3, 4, 5], $this->mergeSort->sort($array));
-        $this->assertEquals([1, 2, 3, 4, 5], $this->quickSort->sort($array));
+        $values = [1, 2, 3, 4, 5];
+        $this->assertEquals($values, $this->listToArray($this->mergeSort->sort($this->createList($values))));
+        $this->assertEquals($values, $this->listToArray($this->quickSort->sort($this->createList($values))));
     }
 
     /**
@@ -54,10 +58,10 @@ class SortTest extends TestCase
      */
     public function testSortReverseSorted(): void
     {
-        $array = [5, 4, 3, 2, 1];
+        $values = [5, 4, 3, 2, 1];
         $expected = [1, 2, 3, 4, 5];
-        $this->assertEquals($expected, $this->mergeSort->sort($array));
-        $this->assertEquals($expected, $this->quickSort->sort($array));
+        $this->assertEquals($expected, $this->listToArray($this->mergeSort->sort($this->createList($values))));
+        $this->assertEquals($expected, $this->listToArray($this->quickSort->sort($this->createList($values))));
     }
 
     /**
@@ -65,10 +69,10 @@ class SortTest extends TestCase
      */
     public function testSortUnsortedArray(): void
     {
-        $array = [64, 34, 25, 12, 22, 11, 90];
+        $values = [64, 34, 25, 12, 22, 11, 90];
         $expected = [11, 12, 22, 25, 34, 64, 90];
-        $this->assertEquals($expected, $this->mergeSort->sort($array));
-        $this->assertEquals($expected, $this->quickSort->sort($array));
+        $this->assertEquals($expected, $this->listToArray($this->mergeSort->sort($this->createList($values))));
+        $this->assertEquals($expected, $this->listToArray($this->quickSort->sort($this->createList($values))));
     }
 
     /**
@@ -76,10 +80,10 @@ class SortTest extends TestCase
      */
     public function testSortWithDuplicates(): void
     {
-        $array = [5, 2, 8, 2, 9, 1, 5, 5];
+        $values = [5, 2, 8, 2, 9, 1, 5, 5];
         $expected = [1, 2, 2, 5, 5, 5, 8, 9];
-        $this->assertEquals($expected, $this->mergeSort->sort($array));
-        $this->assertEquals($expected, $this->quickSort->sort($array));
+        $this->assertEquals($expected, $this->listToArray($this->mergeSort->sort($this->createList($values))));
+        $this->assertEquals($expected, $this->listToArray($this->quickSort->sort($this->createList($values))));
     }
 
     /**
@@ -87,10 +91,10 @@ class SortTest extends TestCase
      */
     public function testSortWithNegativeNumbers(): void
     {
-        $array = [-5, 3, -2, 8, -1, 0, 4];
+        $values = [-5, 3, -2, 8, -1, 0, 4];
         $expected = [-5, -2, -1, 0, 3, 4, 8];
-        $this->assertEquals($expected, $this->mergeSort->sort($array));
-        $this->assertEquals($expected, $this->quickSort->sort($array));
+        $this->assertEquals($expected, $this->listToArray($this->mergeSort->sort($this->createList($values))));
+        $this->assertEquals($expected, $this->listToArray($this->quickSort->sort($this->createList($values))));
     }
 
     /**
@@ -98,10 +102,10 @@ class SortTest extends TestCase
      */
     public function testSortWithFloats(): void
     {
-        $array = [3.5, 1.2, 4.8, 2.1, 3.5];
+        $values = [3.5, 1.2, 4.8, 2.1, 3.5];
         $expected = [1.2, 2.1, 3.5, 3.5, 4.8];
-        $this->assertEquals($expected, $this->mergeSort->sort($array));
-        $this->assertEquals($expected, $this->quickSort->sort($array));
+        $this->assertEquals($expected, $this->listToArray($this->mergeSort->sort($this->createList($values))));
+        $this->assertEquals($expected, $this->listToArray($this->quickSort->sort($this->createList($values))));
     }
 
     /**
@@ -109,10 +113,10 @@ class SortTest extends TestCase
      */
     public function testSortStrings(): void
     {
-        $array = ['dog', 'cat', 'elephant', 'ant', 'bear'];
+        $values = ['dog', 'cat', 'elephant', 'ant', 'bear'];
         $expected = ['ant', 'bear', 'cat', 'dog', 'elephant'];
-        $this->assertEquals($expected, $this->mergeSort->sort($array));
-        $this->assertEquals($expected, $this->quickSort->sort($array));
+        $this->assertEquals($expected, $this->listToArray($this->mergeSort->sort($this->createList($values))));
+        $this->assertEquals($expected, $this->listToArray($this->quickSort->sort($this->createList($values))));
     }
 
     /**
@@ -120,13 +124,13 @@ class SortTest extends TestCase
      */
     public function testSortDescendingWithComparator(): void
     {
-        $array = [3, 1, 4, 1, 5, 9, 2, 6];
+        $values = [3, 1, 4, 1, 5, 9, 2, 6];
         $expected = [9, 6, 5, 4, 3, 2, 1, 1];
 
         $descComparator = fn($a, $b) => $a > $b ? -1 : ($a < $b ? 1 : 0);
 
-        $this->assertEquals($expected, $this->mergeSort->sort($array, $descComparator));
-        $this->assertEquals($expected, $this->quickSort->sort($array, $descComparator));
+        $this->assertEquals($expected, $this->listToArray($this->mergeSort->sort($this->createList($values), $descComparator)));
+        $this->assertEquals($expected, $this->listToArray($this->quickSort->sort($this->createList($values), $descComparator)));
     }
 
     /**
@@ -135,19 +139,21 @@ class SortTest extends TestCase
      */
     public function testSortCaseInsensitiveStrings(): void
     {
-        $array = ['Banana', 'apple', 'Cherry', 'banana'];
+        $values = ['Banana', 'apple', 'Cherry', 'banana'];
 
         $caseInsensitiveComparator = fn($a, $b) =>
         strcasecmp((string)$a, (string)$b);
 
-        $result1 = $this->mergeSort->sort($array, $caseInsensitiveComparator);
-        $result2 = $this->quickSort->sort($array, $caseInsensitiveComparator);
+        $result1 = $this->mergeSort->sort($this->createList($values), $caseInsensitiveComparator);
+        $result2 = $this->quickSort->sort($this->createList($values), $caseInsensitiveComparator);
 
-        // Check that all elements are present and first is 'apple' (lowercase)
-        $this->assertCount(4, $result1);
-        $this->assertCount(4, $result2);
-        $this->assertEquals('apple', $result1[0]);
-        $this->assertEquals('apple', $result2[0]);
+        $resultArray1 = $this->listToArray($result1);
+        $resultArray2 = $this->listToArray($result2);
+
+        $this->assertCount(4, $resultArray1);
+        $this->assertCount(4, $resultArray2);
+        $this->assertEquals('apple', $resultArray1[0]);
+        $this->assertEquals('apple', $resultArray2[0]);
     }
 
     /**
@@ -156,16 +162,16 @@ class SortTest extends TestCase
     public function testSortLargeArray(): void
     {
         // Generate random array
-        $array = [];
+        $values = [];
         for ($i = 0; $i < 1000; $i++) {
-            $array[] = rand(1, 10000);
+            $values[] = rand(1, 10000);
         }
 
-        $expected = $array;
+        $expected = $values;
         sort($expected);
 
-        $this->assertEquals($expected, $this->mergeSort->sort($array));
-        $this->assertEquals($expected, $this->quickSort->sort($array));
+        $this->assertEquals($expected, $this->listToArray($this->mergeSort->sort($this->createList($values))));
+        $this->assertEquals($expected, $this->listToArray($this->quickSort->sort($this->createList($values))));
     }
 
     /**
@@ -173,14 +179,17 @@ class SortTest extends TestCase
      */
     public function testSortingDoesNotModifyOriginal(): void
     {
-        $array = [5, 2, 8, 1];
-        $original = $array;
+        $originalList = $this->createList([5, 2, 8, 1]);
+        $cloneForMerge = $this->cloneList($originalList);
+        $cloneForQuick = $this->cloneList($originalList);
 
-        $this->mergeSort->sort($array);
-        $this->assertEquals($original, $array);
+        $this->mergeSort->sort($cloneForMerge);
+        $this->assertEquals([1, 2, 5, 8], $this->listToArray($cloneForMerge));
+        $this->assertEquals([5, 2, 8, 1], $this->listToArray($originalList));
 
-        $this->quickSort->sort($array);
-        $this->assertEquals($original, $array);
+        $this->quickSort->sort($cloneForQuick);
+        $this->assertEquals([1, 2, 5, 8], $this->listToArray($cloneForQuick));
+        $this->assertEquals([5, 2, 8, 1], $this->listToArray($originalList));
     }
 
     /**
@@ -188,12 +197,39 @@ class SortTest extends TestCase
      */
     public function testSortWithNumericKeys(): void
     {
-        $array = [10 => 5, 20 => 2, 30 => 8, 5 => 1];
-        $result1 = $this->mergeSort->sort($array);
-        $result2 = $this->quickSort->sort($array);
+        $values = array_values([10 => 5, 20 => 2, 30 => 8, 5 => 1]);
+        $expected = [1, 2, 5, 8];
 
-        // Both should return re-indexed arrays with sorted values
-        $this->assertEquals([1, 2, 5, 8], $result1);
-        $this->assertEquals([1, 2, 5, 8], $result2);
+        $result1 = $this->mergeSort->sort($this->createList($values));
+        $result2 = $this->quickSort->sort($this->createList($values));
+
+        $this->assertEquals($expected, $this->listToArray($result1));
+        $this->assertEquals($expected, $this->listToArray($result2));
+    }
+
+    private function createList(array $items): ListInterface
+    {
+        if ($items === []) {
+            return new ArrayList('NULL');
+        }
+
+        $type = gettype(reset($items));
+        $list = new ArrayList($type);
+
+        foreach ($items as $item) {
+            $list->add($item);
+        }
+
+        return $list;
+    }
+
+    private function listToArray(ListInterface $list): array
+    {
+        return iterator_to_array($list);
+    }
+
+    private function cloneList(ListInterface $list): ListInterface
+    {
+        return $this->createList($this->listToArray($list));
     }
 }

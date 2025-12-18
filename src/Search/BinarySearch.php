@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Algoritmes\Search;
 
+use Algoritmes\Lists\Interfaces\ListInterface;
+
 /**
  * Binary Search implementation
  * 
@@ -14,43 +16,40 @@ namespace Algoritmes\Search;
  * 
  * Space Complexity: O(1) - iterative implementation uses constant space
  * 
- * Note: The array MUST be sorted before using binary search!
+ * Note: The list MUST be sorted before using binary search!
  */
 class BinarySearch extends AbstractSearcher
 {
     /**
      * {@inheritdoc}
      */
-    public function search(array $array, mixed $target, ?callable $comparator = null): int
+    public function search(ListInterface $list, mixed $target, ?callable $comparator = null): int
     {
         $comparator = $this->getComparator($comparator);
 
-        if (empty($array)) {
+        if ($list->count() === 0) {
             return -1;
         }
 
-        // Re-index array to ensure proper indexing
-        $array = array_values($array);
-
-        return $this->binarySearch($array, $target, $comparator);
+        return $this->binarySearch($list, $target, $comparator);
     }
 
     /**
-     * Perform iterative binary search on sorted array
+     * Perform iterative binary search on sorted list
      * 
-     * @param array $array The sorted array to search in
+     * @param ListInterface $list The sorted list to search in
      * @param mixed $target The element to search for
      * @param callable $comparator The comparator function
      * @return int The index if found, -1 otherwise
      */
-    private function binarySearch(array $array, mixed $target, callable $comparator): int
+    private function binarySearch(ListInterface $list, mixed $target, callable $comparator): int
     {
         $left = 0;
-        $right = count($array) - 1;
+        $right = $list->count() - 1;
 
         while ($left <= $right) {
             $mid = (int)(($left + $right) / 2);
-            $midValue = $array[$mid];
+            $midValue = $list->get($mid);
 
             $comparison = $comparator($midValue, $target);
 
@@ -71,29 +70,28 @@ class BinarySearch extends AbstractSearcher
     }
 
     /**
-     * Find the leftmost (first) occurrence of target in sorted array
+     * Find the leftmost (first) occurrence of target in sorted list
      * 
-     * @param array $array The sorted array to search in
+     * @param ListInterface $list The sorted list to search in
      * @param mixed $target The element to search for
      * @param callable|null $comparator Optional custom comparator function
      * @return int The index of the first occurrence if found, -1 otherwise
      */
-    public function searchLeftmost(array $array, mixed $target, ?callable $comparator = null): int
+    public function searchLeftmost(ListInterface $list, mixed $target, ?callable $comparator = null): int
     {
         $comparator = $this->getComparator($comparator);
 
-        if (empty($array)) {
+        if ($list->count() === 0) {
             return -1;
         }
 
-        $array = array_values($array);
         $left = 0;
-        $right = count($array) - 1;
+        $right = $list->count() - 1;
         $result = -1;
 
         while ($left <= $right) {
             $mid = (int)(($left + $right) / 2);
-            $comparison = $comparator($array[$mid], $target);
+            $comparison = $comparator($list->get($mid), $target);
 
             if ($comparison === 0) {
                 $result = $mid;
@@ -110,29 +108,28 @@ class BinarySearch extends AbstractSearcher
     }
 
     /**
-     * Find the rightmost (last) occurrence of target in sorted array
+     * Find the rightmost (last) occurrence of target in sorted list
      * 
-     * @param array $array The sorted array to search in
+     * @param ListInterface $list The sorted list to search in
      * @param mixed $target The element to search for
      * @param callable|null $comparator Optional custom comparator function
      * @return int The index of the last occurrence if found, -1 otherwise
      */
-    public function searchRightmost(array $array, mixed $target, ?callable $comparator = null): int
+    public function searchRightmost(ListInterface $list, mixed $target, ?callable $comparator = null): int
     {
         $comparator = $this->getComparator($comparator);
 
-        if (empty($array)) {
+        if ($list->count() === 0) {
             return -1;
         }
 
-        $array = array_values($array);
         $left = 0;
-        $right = count($array) - 1;
+        $right = $list->count() - 1;
         $result = -1;
 
         while ($left <= $right) {
             $mid = (int)(($left + $right) / 2);
-            $comparison = $comparator($array[$mid], $target);
+            $comparison = $comparator($list->get($mid), $target);
 
             if ($comparison === 0) {
                 $result = $mid;
@@ -149,29 +146,28 @@ class BinarySearch extends AbstractSearcher
     }
 
     /**
-     * Find the insertion position for target in sorted array
+     * Find the insertion position for target in sorted list
      * This is useful for maintaining sorted order when inserting new elements
      * 
-     * @param array $array The sorted array
+     * @param ListInterface $list The sorted list
      * @param mixed $target The element to find insertion position for
      * @param callable|null $comparator Optional custom comparator function
      * @return int The index where target should be inserted
      */
-    public function findInsertionPosition(array $array, mixed $target, ?callable $comparator = null): int
+    public function findInsertionPosition(ListInterface $list, mixed $target, ?callable $comparator = null): int
     {
         $comparator = $this->getComparator($comparator);
 
-        if (empty($array)) {
+        if ($list->count() === 0) {
             return 0;
         }
 
-        $array = array_values($array);
         $left = 0;
-        $right = count($array);
+        $right = $list->count();
 
         while ($left < $right) {
             $mid = (int)(($left + $right) / 2);
-            $comparison = $comparator($array[$mid], $target);
+            $comparison = $comparator($list->get($mid), $target);
 
             if ($comparison < 0) {
                 $left = $mid + 1;

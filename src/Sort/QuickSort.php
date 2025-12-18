@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Algoritmes\Sort;
 
+use Algoritmes\Lists\Interfaces\ListInterface;
+
 /**
  * Quick Sort implementation
  * 
@@ -21,17 +23,16 @@ class QuickSort extends AbstractSorter
     /**
      * {@inheritdoc}
      */
-    public function sort(array $array, ?callable $comparator = null): array
+    public function sort(ListInterface $list, ?callable $comparator = null): ListInterface
     {
         $comparator = $this->getComparator($comparator);
 
-        if (count($array) <= 1) {
-            return $array;
+        if ($list->count() <= 1) {
+            return $list;
         }
 
-        $array = array_values($array); // Re-index array
-        $this->quickSort($array, 0, count($array) - 1, $comparator);
-        return $array;
+        $this->quickSort($list, 0, $list->count() - 1, $comparator);
+        return $list;
     }
 
     /**
@@ -43,15 +44,15 @@ class QuickSort extends AbstractSorter
      * @param callable $comparator The comparator function
      * @return void
      */
-    private function quickSort(array &$array, int $low, int $high, callable $comparator): void
+    private function quickSort(ListInterface $list, int $low, int $high, callable $comparator): void
     {
         if ($low < $high) {
             // Partition the array and get the pivot index
-            $partitionIndex = $this->partition($array, $low, $high, $comparator);
+            $partitionIndex = $this->partition($list, $low, $high, $comparator);
 
             // Recursively sort elements before and after partition
-            $this->quickSort($array, $low, $partitionIndex - 1, $comparator);
-            $this->quickSort($array, $partitionIndex + 1, $high, $comparator);
+            $this->quickSort($list, $low, $partitionIndex - 1, $comparator);
+            $this->quickSort($list, $partitionIndex + 1, $high, $comparator);
         }
     }
 
@@ -65,22 +66,22 @@ class QuickSort extends AbstractSorter
      * @param callable $comparator The comparator function
      * @return int The final pivot index
      */
-    private function partition(array &$array, int $low, int $high, callable $comparator): int
+    private function partition(ListInterface $list, int $low, int $high, callable $comparator): int
     {
-        $pivot = $array[$high];
+        $pivot = $list->get($high);
         $i = $low - 1;
 
         // Compare each element with the pivot
         for ($j = $low; $j < $high; $j++) {
-            if ($comparator($array[$j], $pivot) < 0) {
+            if ($comparator($list->get($j), $pivot) < 0) {
                 $i++;
                 // Swap elements at positions i and j
-                $this->swap($array, $i, $j);
+                $this->swap($list, $i, $j);
             }
         }
 
         // Place pivot at its final position
-        $this->swap($array, $i + 1, $high);
+        $this->swap($list, $i + 1, $high);
         return $i + 1;
     }
 
@@ -92,10 +93,14 @@ class QuickSort extends AbstractSorter
      * @param int $index2 The second index
      * @return void
      */
-    private function swap(array &$array, int $index1, int $index2): void
+    private function swap(ListInterface $list, int $index1, int $index2): void
     {
-        $temp = $array[$index1];
-        $array[$index1] = $array[$index2];
-        $array[$index2] = $temp;
+        if ($index1 === $index2) {
+            return;
+        }
+
+        $temp = $list->get($index1);
+        $list->set($index1, $list->get($index2));
+        $list->set($index2, $temp);
     }
 }

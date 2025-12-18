@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Algoritmes\Sort;
 
+use Algoritmes\Lists\ArrayList;
+use Algoritmes\Lists\Interfaces\ListInterface;
+
 /**
  * Merge Sort implementation
  * 
@@ -21,15 +24,16 @@ class MergeSort extends AbstractSorter
     /**
      * {@inheritdoc}
      */
-    public function sort(array $array, ?callable $comparator = null): array
+    public function sort(ListInterface $list, ?callable $comparator = null): ListInterface
     {
         $comparator = $this->getComparator($comparator);
 
-        if (count($array) <= 1) {
-            return $array;
+        if ($list->count() <= 1) {
+            return $list;
         }
 
-        return $this->mergeSort($array, $comparator);
+        $this->mergeSort($list, 0, $list->count() - 1, $comparator);
+        return $list;
     }
 
     /**
@@ -39,26 +43,18 @@ class MergeSort extends AbstractSorter
      * @param callable $comparator The comparator function
      * @return array The sorted array
      */
-    private function mergeSort(array $array, callable $comparator): array
+    private function mergeSort(ListInterface $list, int $left, int $right, callable $comparator): void
     {
-        $length = count($array);
-
-        // Base case: arrays with 0 or 1 element are already sorted
-        if ($length <= 1) {
-            return $array;
+        if ($left >= $right) {
+            return;
         }
 
-        // Divide the array in half
-        $middle = (int)($length / 2);
-        $left = array_slice($array, 0, $middle);
-        $right = array_slice($array, $middle);
+        $middle = (int)(($left + $right) / 2);
 
-        // Recursively sort both halves
-        $left = $this->mergeSort($left, $comparator);
-        $right = $this->mergeSort($right, $comparator);
+        $this->mergeSort($list, $left, $middle, $comparator);
+        $this->mergeSort($list, $middle + 1, $right, $comparator);
 
-        // Merge the sorted halves
-        return $this->merge($left, $right, $comparator);
+        $this->merge($list, $left, $middle, $right, $comparator);
     }
 
     /**
@@ -69,37 +65,55 @@ class MergeSort extends AbstractSorter
      * @param callable $comparator The comparator function
      * @return array The merged sorted array
      */
-    private function merge(array $left, array $right, callable $comparator): array
+    private function merge(ListInterface $list, int $left, int $middle, int $right, callable $comparator): void
     {
-        $result = [];
-        $leftIndex = 0;
-        $rightIndex = 0;
-        $leftLength = count($left);
-        $rightLength = count($right);
+        $leftLength = $middle - $left + 1;
+        $rightLength = $right - $middle;
 
-        // Compare elements from left and right arrays and add the smaller one
-        while ($leftIndex < $leftLength && $rightIndex < $rightLength) {
-            if ($comparator($left[$leftIndex], $right[$rightIndex]) <= 0) {
-                $result[] = $left[$leftIndex];
-                $leftIndex++;
+        $leftBuffer = $this->copySegment($list, $left, $leftLength);
+        $rightBuffer = $this->copySegment($list, $middle + 1, $rightLength);
+
+        $i = 0;
+        $j = 0;
+        $k = $left;
+
+        while ($i < $leftLength && $j < $rightLength) {
+            if ($comparator($leftBuffer->get($i), $rightBuffer->get($j)) <= 0) {
+                $list->set($k, $leftBuffer->get($i));
+                $i++;
             } else {
-                $result[] = $right[$rightIndex];
-                $rightIndex++;
+                $list->set($k, $rightBuffer->get($j));
+                $j++;
             }
+            $k++;
         }
 
-        // Add remaining elements from left array
-        while ($leftIndex < $leftLength) {
-            $result[] = $left[$leftIndex];
-            $leftIndex++;
+        while ($i < $leftLength) {
+            $list->set($k, $leftBuffer->get($i));
+            $i++;
+            $k++;
         }
 
-        // Add remaining elements from right array
-        while ($rightIndex < $rightLength) {
-            $result[] = $right[$rightIndex];
-            $rightIndex++;
+        while ($j < $rightLength) {
+            $list->set($k, $rightBuffer->get($j));
+            $j++;
+            $k++;
+        }
+    }
+
+    private function copySegment(ListInterface $list, int $start, int $length): ListInterface
+    {
+        if ($length <= 0) {
+            return new ArrayList('NULL');
         }
 
-        return $result;
+        $type = gettype($list->get($start));
+        $buffer = new ArrayList($type);
+
+        for ($offset = 0; $offset < $length; $offset++) {
+            $buffer->add($list->get($start + $offset));
+        }
+
+        return $buffer;
     }
 }
