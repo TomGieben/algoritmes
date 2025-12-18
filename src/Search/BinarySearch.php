@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Algoritmes\Search;
 
+use Algoritmes\Lists\Adapters\RandomAccessAdapter;
 use Algoritmes\Lists\Interfaces\ListInterface;
+use Algoritmes\Lists\Interfaces\RandomAccessListInterface;
 
 /**
  * Binary Search implementation
@@ -25,13 +27,14 @@ class BinarySearch extends AbstractSearcher
      */
     public function search(ListInterface $list, mixed $target, ?callable $comparator = null): int
     {
-        $comparator = $this->getComparator($comparator);
-
         if ($list->count() === 0) {
             return -1;
         }
 
-        return $this->binarySearch($list, $target, $comparator);
+        $accessList = RandomAccessAdapter::ensure($list);
+        $comparator = $this->getComparator($comparator);
+
+        return $this->binarySearch($accessList, $target, $comparator);
     }
 
     /**
@@ -42,7 +45,7 @@ class BinarySearch extends AbstractSearcher
      * @param callable $comparator The comparator function
      * @return int The index if found, -1 otherwise
      */
-    private function binarySearch(ListInterface $list, mixed $target, callable $comparator): int
+    private function binarySearch(RandomAccessListInterface $list, mixed $target, callable $comparator): int
     {
         $left = 0;
         $right = $list->count() - 1;
@@ -79,19 +82,20 @@ class BinarySearch extends AbstractSearcher
      */
     public function searchLeftmost(ListInterface $list, mixed $target, ?callable $comparator = null): int
     {
-        $comparator = $this->getComparator($comparator);
-
         if ($list->count() === 0) {
             return -1;
         }
 
+        $accessList = RandomAccessAdapter::ensure($list);
+        $comparator = $this->getComparator($comparator);
+
         $left = 0;
-        $right = $list->count() - 1;
+        $right = $accessList->count() - 1;
         $result = -1;
 
         while ($left <= $right) {
             $mid = (int)(($left + $right) / 2);
-            $comparison = $comparator($list->get($mid), $target);
+            $comparison = $comparator($accessList->get($mid), $target);
 
             if ($comparison === 0) {
                 $result = $mid;
@@ -117,19 +121,20 @@ class BinarySearch extends AbstractSearcher
      */
     public function searchRightmost(ListInterface $list, mixed $target, ?callable $comparator = null): int
     {
-        $comparator = $this->getComparator($comparator);
-
         if ($list->count() === 0) {
             return -1;
         }
 
+        $accessList = RandomAccessAdapter::ensure($list);
+        $comparator = $this->getComparator($comparator);
+
         $left = 0;
-        $right = $list->count() - 1;
+        $right = $accessList->count() - 1;
         $result = -1;
 
         while ($left <= $right) {
             $mid = (int)(($left + $right) / 2);
-            $comparison = $comparator($list->get($mid), $target);
+            $comparison = $comparator($accessList->get($mid), $target);
 
             if ($comparison === 0) {
                 $result = $mid;
@@ -156,18 +161,19 @@ class BinarySearch extends AbstractSearcher
      */
     public function findInsertionPosition(ListInterface $list, mixed $target, ?callable $comparator = null): int
     {
-        $comparator = $this->getComparator($comparator);
-
         if ($list->count() === 0) {
             return 0;
         }
 
+        $accessList = RandomAccessAdapter::ensure($list);
+        $comparator = $this->getComparator($comparator);
+
         $left = 0;
-        $right = $list->count();
+        $right = $accessList->count();
 
         while ($left < $right) {
             $mid = (int)(($left + $right) / 2);
-            $comparison = $comparator($list->get($mid), $target);
+            $comparison = $comparator($accessList->get($mid), $target);
 
             if ($comparison < 0) {
                 $left = $mid + 1;

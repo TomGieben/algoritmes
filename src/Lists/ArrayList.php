@@ -5,15 +5,18 @@ declare(strict_types=1);
 namespace Algoritmes\Lists;
 
 use Algoritmes\Lists\Interfaces\ListInterface;
+use Algoritmes\Lists\Interfaces\RandomAccessListInterface;
 
-class ArrayList implements ListInterface
+class ArrayList implements ListInterface, RandomAccessListInterface
 {
     private array $items = [];
     private string $type;
+    private bool $enforceType;
 
-    public function __construct(string $type)
+    public function __construct(string $type = 'mixed')
     {
-        $this->type = $type;
+        $this->type = $this->normalizeType($type);
+        $this->enforceType = $this->type !== 'mixed';
     }
 
     public function add(mixed $item): void
@@ -24,6 +27,10 @@ class ArrayList implements ListInterface
 
     public function insert(int $index, mixed $item): void
     {
+        if ($index < 0 || $index > count($this->items)) {
+            throw new \OutOfBoundsException("Index out of bounds");
+        }
+
         $this->validateType($item);
         array_splice($this->items, $index, 0, [$item]);
     }
@@ -79,9 +86,19 @@ class ArrayList implements ListInterface
 
     private function validateType(mixed $item): void
     {
-        $type = gettype($item);
+        if (!$this->enforceType) {
+            return;
+        }
+
+        $type = strtolower(gettype($item));
         if ($type !== $this->type) {
             throw new \InvalidArgumentException("Item must be of type {$this->type}, {$type} given.");
         }
+    }
+
+    private function normalizeType(string $type): string
+    {
+        $type = strtolower($type);
+        return $type === '' ? 'mixed' : $type;
     }
 }

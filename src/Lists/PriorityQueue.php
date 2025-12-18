@@ -8,56 +8,112 @@ use Algoritmes\Lists\Interfaces\PriorityQueueInterface;
 
 class PriorityQueue implements PriorityQueueInterface
 {
-    private array $items = [];
+    private array $heap = [];
+    private int $count = 0;
+    private int $sequence = 0;
 
-    public function enqueue(mixed $item, int $priority): void
+    public function enqueue(mixed $item, float $priority): void
     {
-        if (!isset($this->items[$priority])) {
-            $this->items[$priority] = [];
-        }
+        $entry = [
+            'priority' => $priority,
+            'sequence' => $this->sequence++,
+            'value' => $item,
+        ];
 
-        $this->items[$priority][] = $item;
-
-        ksort($this->items);
+        $this->heap[$this->count] = $entry;
+        $this->siftUp($this->count);
+        $this->count++;
     }
 
     public function dequeue(): mixed
     {
         if ($this->isEmpty()) {
-            throw new \UnderflowException("Cannot dequeue from an empty priority queue");
+            throw new \UnderflowException('Cannot dequeue from an empty priority queue');
         }
 
-        $firstPriority = key($this->items);
-        $item = array_shift($this->items[$firstPriority]);
+        $min = $this->heap[0];
+        $lastIndex = $this->count - 1;
+        $this->count--;
 
-        if (empty($this->items[$firstPriority])) {
-            unset($this->items[$firstPriority]);
+        if ($lastIndex > 0) {
+            $this->heap[0] = $this->heap[$lastIndex];
+            unset($this->heap[$lastIndex]);
+            $this->siftDown(0);
+        } else {
+            $this->heap = [];
         }
 
-        return $item;
+        return $min['value'];
     }
 
     public function isEmpty(): bool
     {
-        return empty($this->items);
+        return $this->count === 0;
     }
 
     public function size(): int
     {
-        $count = 0;
-        foreach ($this->items as $priorityLevel) {
-            $count += count($priorityLevel);
-        }
-        return $count;
+        return $this->count;
     }
 
     public function peek(): mixed
     {
         if ($this->isEmpty()) {
-            throw new \UnderflowException("Cannot peek into an empty priority queue");
+            throw new \UnderflowException('Cannot peek into an empty priority queue');
         }
 
-        $firstPriority = key($this->items);
-        return $this->items[$firstPriority][0];
+        return $this->heap[0]['value'];
+    }
+
+    private function siftUp(int $index): void
+    {
+        while ($index > 0) {
+            $parent = (int)(($index - 1) / 2);
+            if ($this->compare($this->heap[$index], $this->heap[$parent]) >= 0) {
+                break;
+            }
+
+            $this->swap($index, $parent);
+            $index = $parent;
+        }
+    }
+
+    private function siftDown(int $index): void
+    {
+        while (true) {
+            $left = (2 * $index) + 1;
+            $right = $left + 1;
+            $smallest = $index;
+
+            if ($left < $this->count && $this->compare($this->heap[$left], $this->heap[$smallest]) < 0) {
+                $smallest = $left;
+            }
+
+            if ($right < $this->count && $this->compare($this->heap[$right], $this->heap[$smallest]) < 0) {
+                $smallest = $right;
+            }
+
+            if ($smallest === $index) {
+                break;
+            }
+
+            $this->swap($index, $smallest);
+            $index = $smallest;
+        }
+    }
+
+    private function compare(array $a, array $b): int
+    {
+        $priorityComparison = $a['priority'] <=> $b['priority'];
+        if ($priorityComparison !== 0) {
+            return $priorityComparison;
+        }
+
+        return $a['sequence'] <=> $b['sequence'];
+    }
+
+    private function swap(int $a, int $b): void
+    {
+        [$this->heap[$a], $this->heap[$b]] = [$this->heap[$b], $this->heap[$a]];
     }
 }

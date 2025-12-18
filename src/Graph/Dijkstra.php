@@ -6,6 +6,9 @@ namespace Algoritmes\Graph;
 
 use Algoritmes\Graph\Interfaces\GraphInterface;
 use Algoritmes\Graph\Interfaces\PathfinderInterface;
+use Algoritmes\Lists\Interfaces\PriorityQueueInterface;
+use Algoritmes\Lists\PriorityQueue;
+use Closure;
 use InvalidArgumentException;
 
 /**
@@ -23,10 +26,14 @@ use InvalidArgumentException;
 class Dijkstra implements PathfinderInterface
 {
     private GraphInterface $graph;
+    private Closure $queueFactory;
 
-    public function __construct(GraphInterface $graph)
+    public function __construct(GraphInterface $graph, ?callable $queueFactory = null)
     {
         $this->graph = $graph;
+        $this->queueFactory = $queueFactory !== null
+            ? Closure::fromCallable($queueFactory)
+            : static fn(): PriorityQueueInterface => new PriorityQueue();
     }
 
     /**
@@ -61,7 +68,6 @@ class Dijkstra implements PathfinderInterface
 
         $vertices = $this->graph->getVertices();
 
-        // Initialize distances and previous vertices tracking
         $distances = [];
         $previous = [];
         $visited = [];
@@ -72,33 +78,35 @@ class Dijkstra implements PathfinderInterface
             $visited[$vertex] = false;
         }
 
-        // Start vertex has distance 0
-        $distances[$start] = 0;
+        $distances[$start] = 0.0;
 
-        // Process all vertices
-        for ($i = 0; $i < count($vertices); $i++) {
-            // Find unvisited vertex with minimum distance
-            $currentVertex = $this->findMinDistanceVertex($distances, $visited);
+        $queueFactory = $this->queueFactory;
+        $queue = $queueFactory();
+        $queue->enqueue($start, 0.0);
 
-            if ($currentVertex === null || $distances[$currentVertex] === PHP_FLOAT_MAX) {
-                break; // No more reachable vertices
+        while (!$queue->isEmpty()) {
+            $currentVertex = $queue->dequeue();
+
+            if ($visited[$currentVertex]) {
+                continue;
             }
 
             $visited[$currentVertex] = true;
 
-            // Update distances to neighbors
-            $edges = $this->graph->getEdges($currentVertex);
-            foreach ($edges as $edge) {
-                $neighbor = $edge['to'];
-                $weight = $edge['weight'];
+            foreach ($this->graph->getEdges($currentVertex) as $edge) {
+                $neighbor = $edge->to;
+                $weight = $edge->weight;
 
-                if (!$visited[$neighbor]) {
-                    $newDistance = $distances[$currentVertex] + $weight;
+                if ($weight < 0) {
+                    throw new InvalidArgumentException('Dijkstra cannot process negative edge weights');
+                }
 
-                    if ($newDistance < $distances[$neighbor]) {
-                        $distances[$neighbor] = $newDistance;
-                        $previous[$neighbor] = $currentVertex;
-                    }
+                $newDistance = $distances[$currentVertex] + $weight;
+
+                if ($newDistance < $distances[$neighbor]) {
+                    $distances[$neighbor] = $newDistance;
+                    $previous[$neighbor] = $currentVertex;
+                    $queue->enqueue($neighbor, $newDistance);
                 }
             }
         }
@@ -107,24 +115,6 @@ class Dijkstra implements PathfinderInterface
         $this->previousVertices = $previous;
 
         return $distances;
-    }
-
-    /**
-     * Find the unvisited vertex with minimum distance
-     */
-    private function findMinDistanceVertex(array $distances, array $visited): ?string
-    {
-        $minDistance = PHP_FLOAT_MAX;
-        $minVertex = null;
-
-        foreach ($distances as $vertex => $distance) {
-            if (!$visited[$vertex] && $distance < $minDistance) {
-                $minDistance = $distance;
-                $minVertex = $vertex;
-            }
-        }
-
-        return $minVertex;
     }
 
     /**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Algoritmes\Graph;
 
+use Algoritmes\Graph\Edge;
 use Algoritmes\Graph\Interfaces\GraphInterface;
 use InvalidArgumentException;
 
@@ -13,24 +14,17 @@ use InvalidArgumentException;
 class Graph implements GraphInterface
 {
     /**
-     * Adjacency list representation
-     * vertex => [['to' => vertex, 'weight' => weight], ...]
+     * Adjacency list representation (vertex => Edge[])
      */
-    private array $adjList = [];
-
-    /**
-     * All vertices in the graph
-     */
-    private array $vertices = [];
+    private array $adjacency = [];
 
     /**
      * {@inheritdoc}
      */
     public function addVertex(string $vertex): void
     {
-        if (!isset($this->adjList[$vertex])) {
-            $this->vertices[] = $vertex;
-            $this->adjList[$vertex] = [];
+        if (!isset($this->adjacency[$vertex])) {
+            $this->adjacency[$vertex] = [];
         }
     }
 
@@ -39,15 +33,10 @@ class Graph implements GraphInterface
      */
     public function addEdge(string $from, string $to, float $weight): void
     {
-        if (!isset($this->adjList[$from])) {
-            $this->addVertex($from);
-        }
-        if (!isset($this->adjList[$to])) {
-            $this->addVertex($to);
-        }
+        $this->addVertex($from);
+        $this->addVertex($to);
 
-        // Add directed edge
-        $this->adjList[$from][] = ['to' => $to, 'weight' => $weight];
+        $this->adjacency[$from][] = new Edge($from, $to, (float)$weight);
     }
 
     /**
@@ -55,7 +44,7 @@ class Graph implements GraphInterface
      */
     public function getVertices(): array
     {
-        return $this->vertices;
+        return array_keys($this->adjacency);
     }
 
     /**
@@ -63,11 +52,11 @@ class Graph implements GraphInterface
      */
     public function getEdges(string $vertex): array
     {
-        if (!isset($this->adjList[$vertex])) {
+        if (!isset($this->adjacency[$vertex])) {
             throw new InvalidArgumentException("Vertex '$vertex' does not exist");
         }
 
-        return $this->adjList[$vertex];
+        return $this->adjacency[$vertex];
     }
 
     /**
@@ -75,7 +64,7 @@ class Graph implements GraphInterface
      */
     public function hasVertex(string $vertex): bool
     {
-        return isset($this->adjList[$vertex]);
+        return isset($this->adjacency[$vertex]);
     }
 
     /**
@@ -83,12 +72,12 @@ class Graph implements GraphInterface
      */
     public function hasEdge(string $from, string $to): bool
     {
-        if (!isset($this->adjList[$from])) {
+        if (!isset($this->adjacency[$from])) {
             return false;
         }
 
-        foreach ($this->adjList[$from] as $edge) {
-            if ($edge['to'] === $to) {
+        foreach ($this->adjacency[$from] as $edge) {
+            if ($edge->to === $to) {
                 return true;
             }
         }
@@ -101,7 +90,7 @@ class Graph implements GraphInterface
      */
     public function getVertexCount(): int
     {
-        return count($this->vertices);
+        return count($this->adjacency);
     }
 
     /**
@@ -110,7 +99,7 @@ class Graph implements GraphInterface
     public function getEdgeCount(): int
     {
         $count = 0;
-        foreach ($this->adjList as $edges) {
+        foreach ($this->adjacency as $edges) {
             $count += count($edges);
         }
         return $count;

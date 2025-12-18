@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Algoritmes\Sort;
 
+use Algoritmes\Lists\Adapters\RandomAccessAdapter;
 use Algoritmes\Lists\Interfaces\ListInterface;
+use Algoritmes\Lists\Interfaces\RandomAccessListInterface;
 
 /**
  * Quick Sort implementation
@@ -25,14 +27,15 @@ class QuickSort extends AbstractSorter
      */
     public function sort(ListInterface $list, ?callable $comparator = null): ListInterface
     {
-        $comparator = $this->getComparator($comparator);
-
         if ($list->count() <= 1) {
             return $list;
         }
 
-        $this->quickSort($list, 0, $list->count() - 1, $comparator);
-        return $list;
+        $accessList = RandomAccessAdapter::ensure($list);
+        $comparator = $this->getComparator($comparator);
+
+        $this->quickSort($accessList, 0, $accessList->count() - 1, $comparator);
+        return $accessList;
     }
 
     /**
@@ -44,7 +47,7 @@ class QuickSort extends AbstractSorter
      * @param callable $comparator The comparator function
      * @return void
      */
-    private function quickSort(ListInterface $list, int $low, int $high, callable $comparator): void
+    private function quickSort(RandomAccessListInterface $list, int $low, int $high, callable $comparator): void
     {
         if ($low < $high) {
             // Partition the array and get the pivot index
@@ -66,7 +69,7 @@ class QuickSort extends AbstractSorter
      * @param callable $comparator The comparator function
      * @return int The final pivot index
      */
-    private function partition(ListInterface $list, int $low, int $high, callable $comparator): int
+    private function partition(RandomAccessListInterface $list, int $low, int $high, callable $comparator): int
     {
         $pivot = $list->get($high);
         $i = $low - 1;
@@ -93,7 +96,7 @@ class QuickSort extends AbstractSorter
      * @param int $index2 The second index
      * @return void
      */
-    private function swap(ListInterface $list, int $index1, int $index2): void
+    private function swap(RandomAccessListInterface $list, int $index1, int $index2): void
     {
         if ($index1 === $index2) {
             return;

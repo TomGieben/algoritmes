@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Algoritmes\Sort;
 
+use Algoritmes\Lists\Adapters\RandomAccessAdapter;
 use Algoritmes\Lists\ArrayList;
 use Algoritmes\Lists\Interfaces\ListInterface;
+use Algoritmes\Lists\Interfaces\RandomAccessListInterface;
 
 /**
  * Merge Sort implementation
@@ -26,14 +28,15 @@ class MergeSort extends AbstractSorter
      */
     public function sort(ListInterface $list, ?callable $comparator = null): ListInterface
     {
-        $comparator = $this->getComparator($comparator);
-
         if ($list->count() <= 1) {
             return $list;
         }
 
-        $this->mergeSort($list, 0, $list->count() - 1, $comparator);
-        return $list;
+        $accessList = RandomAccessAdapter::ensure($list);
+        $comparator = $this->getComparator($comparator);
+
+        $this->mergeSort($accessList, 0, $accessList->count() - 1, $comparator);
+        return $accessList;
     }
 
     /**
@@ -43,7 +46,7 @@ class MergeSort extends AbstractSorter
      * @param callable $comparator The comparator function
      * @return array The sorted array
      */
-    private function mergeSort(ListInterface $list, int $left, int $right, callable $comparator): void
+    private function mergeSort(RandomAccessListInterface $list, int $left, int $right, callable $comparator): void
     {
         if ($left >= $right) {
             return;
@@ -65,7 +68,7 @@ class MergeSort extends AbstractSorter
      * @param callable $comparator The comparator function
      * @return array The merged sorted array
      */
-    private function merge(ListInterface $list, int $left, int $middle, int $right, callable $comparator): void
+    private function merge(RandomAccessListInterface $list, int $left, int $middle, int $right, callable $comparator): void
     {
         $leftLength = $middle - $left + 1;
         $rightLength = $right - $middle;
@@ -101,14 +104,13 @@ class MergeSort extends AbstractSorter
         }
     }
 
-    private function copySegment(ListInterface $list, int $start, int $length): ListInterface
+    private function copySegment(RandomAccessListInterface $list, int $start, int $length): RandomAccessListInterface
     {
         if ($length <= 0) {
-            return new ArrayList('NULL');
+            return new ArrayList('mixed');
         }
 
-        $type = gettype($list->get($start));
-        $buffer = new ArrayList($type);
+        $buffer = new ArrayList('mixed');
 
         for ($offset = 0; $offset < $length; $offset++) {
             $buffer->add($list->get($start + $offset));

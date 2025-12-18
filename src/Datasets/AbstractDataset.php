@@ -88,11 +88,17 @@ abstract class AbstractDataset implements DatasetInterface
             // Read data rows
             while (($row = fgetcsv($handle, 0, $this->delimiter)) !== false) {
                 if ($this->hasHeader && !empty($this->columns)) {
-                    // Create associative array with column names
-                    $this->data[] = $this->parseRow(array_combine($this->columns, $row));
+                    $combined = array_combine($this->columns, $row);
+                    if ($combined === false) {
+                        throw new RuntimeException('Dataset row does not match header column count');
+                    }
+
+                    $parsedRow = $this->parseRow($combined);
                 } else {
-                    $this->data[] = $this->parseRow($row);
+                    $parsedRow = $this->parseRow($row);
                 }
+
+                $this->data[] = $parsedRow;
             }
 
             $this->loaded = true;

@@ -6,7 +6,7 @@ namespace Algoritmes\Lists\Interfaces;
 
 interface PriorityQueueInterface
 {
-    public function enqueue(mixed $item, int $priority): void;
+    public function enqueue(mixed $item, float $priority): void;
     public function dequeue(): mixed;
     public function isEmpty(): bool;
     public function size(): int;
