@@ -3,6 +3,7 @@
 namespace Algoritmes\Algoritmes;
 
 use Algoritmes\Interfaces\IsComparator;
+use Algoritmes\Interfaces\IsList;
 use Algoritmes\Interfaces\IsSearch;
 
 final class BinarySearch implements IsSearch
