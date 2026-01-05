@@ -10,6 +10,7 @@ final class LinkedList implements IsList
     private ?Node $head = null;
     private ?Node $tail = null;
     private int $size = 0;
+    private ?string $elementType = null;
 
     public function add(mixed $element): void
     {
@@ -19,6 +20,7 @@ final class LinkedList implements IsList
     public function insert(int $index, mixed $element): void
     {
         $this->assertInsertIndex($index);
+        $this->assertElementType($element);
 
         $newNode = new Node($element);
 
@@ -135,6 +137,23 @@ final class LinkedList implements IsList
     {
         if ($index < 0 || $index > $this->size) {
             throw new \OutOfBoundsException("Index $index is out of bounds.");
+        }
+    }
+
+    /**
+     * Validates that the element matches the list's type.
+     * On first element, locks the list to that type.
+     */
+    private function assertElementType(mixed $element): void
+    {
+        $elementType = get_debug_type($element);
+
+        if ($this->elementType === null) {
+            $this->elementType = $elementType;
+        } elseif ($elementType !== $this->elementType) {
+            throw new \TypeError(
+                "List expects elements of type {$this->elementType}, got {$elementType}"
+            );
         }
     }
 }

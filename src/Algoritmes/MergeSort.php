@@ -3,17 +3,19 @@
 namespace Algoritmes\Algoritmes;
 
 use Algoritmes\Enums\SortDirection;
+use Algoritmes\Interfaces\IsComparator;
 use Algoritmes\Interfaces\IsList;
 use Algoritmes\Interfaces\IsSorter;
-use Algoritmes\Objects\PrioritizedObject;
 
 final class MergeSort implements IsSorter
 {
     private IsList $list;
+    private IsComparator $comparator;
 
-    public function __construct(IsList $list)
+    public function __construct(IsList $list, IsComparator $comparator)
     {
         $this->list = $list;
+        $this->comparator = $comparator;
     }
 
     public function sort(SortDirection $direction = SortDirection::ASCENDING): IsList
@@ -34,8 +36,8 @@ final class MergeSort implements IsSorter
             $rightList->add($this->list->get($i));
         }
 
-        $leftSorter = new MergeSort($leftList);
-        $rightSorter = new MergeSort($rightList);
+        $leftSorter = new MergeSort($leftList, $this->comparator);
+        $rightSorter = new MergeSort($rightList, $this->comparator);
 
         return $this->merge(
             $leftSorter->sort($direction),
@@ -54,9 +56,7 @@ final class MergeSort implements IsSorter
             $leftItem = $left->get($i);
             $rightItem = $right->get($j);
 
-            $compare = ($leftItem instanceof PrioritizedObject && $rightItem instanceof PrioritizedObject)
-                ? $leftItem->priority <=> $rightItem->priority
-                : $leftItem <=> $rightItem;
+            $compare = $this->comparator->compare($leftItem, $rightItem);
 
             if (($direction === SortDirection::ASCENDING && $compare <= 0) ||
                 ($direction === SortDirection::DESCENDING && $compare >= 0)

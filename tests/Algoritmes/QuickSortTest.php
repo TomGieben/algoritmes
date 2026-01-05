@@ -7,6 +7,7 @@ use Algoritmes\Algoritmes\QuickSort;
 use Algoritmes\Algoritmes\LinkedList;
 use Algoritmes\Enums\SortDirection;
 use Algoritmes\Helpers\CsvLoader;
+use Algoritmes\Helpers\IntComparator;
 
 class QuickSortTest extends TestCase
 {
@@ -26,7 +27,7 @@ class QuickSortTest extends TestCase
         foreach ($this->primes as $prime) {
             $list->add((int)$prime);
         }
-        $sorter = new QuickSort($list);
+        $sorter = new QuickSort($list, new IntComparator());
         $sorted = $sorter->sort(SortDirection::ASCENDING);
         $this->assertSorted($sorted, SortDirection::ASCENDING);
     }
@@ -39,7 +40,7 @@ class QuickSortTest extends TestCase
         foreach ($reversed as $prime) {
             $list->add((int)$prime);
         }
-        $sorter = new QuickSort($list);
+        $sorter = new QuickSort($list, new IntComparator());
         $sorted = $sorter->sort(SortDirection::ASCENDING);
         $this->assertSorted($sorted, SortDirection::ASCENDING);
     }

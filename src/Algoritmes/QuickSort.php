@@ -3,16 +3,19 @@
 namespace Algoritmes\Algoritmes;
 
 use Algoritmes\Enums\SortDirection;
+use Algoritmes\Interfaces\IsComparator;
 use Algoritmes\Interfaces\IsList;
 use Algoritmes\Interfaces\IsSorter;
 
 final class QuickSort implements IsSorter
 {
     private IsList $list;
+    private IsComparator $comparator;
 
-    public function __construct(IsList $list)
+    public function __construct(IsList $list, IsComparator $comparator)
     {
         $this->list = $list;
+        $this->comparator = $comparator;
     }
 
     public function sort(SortDirection $direction = SortDirection::ASCENDING): IsList
@@ -48,7 +51,8 @@ final class QuickSort implements IsSorter
         $i = $low - 1;
 
         for ($j = $low; $j < $high; $j++) {
-            $compare = ($direction === SortDirection::ASCENDING) ? ($array[$j] < $pivot) : ($array[$j] > $pivot);
+            $comparison = $this->comparator->compare($array[$j], $pivot);
+            $compare = ($direction === SortDirection::ASCENDING) ? ($comparison < 0) : ($comparison > 0);
             if ($compare) {
                 $i++;
                 [$array[$i], $array[$j]] = [$array[$j], $array[$i]];

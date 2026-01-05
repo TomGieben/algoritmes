@@ -10,6 +10,7 @@ final class DoublyLinkedList implements IsList
     private ?DoublyNode $head = null;
     private ?DoublyNode $tail = null;
     private int $size = 0;
+    private ?string $elementType = null;
 
     public function add(mixed $element): void
     {
@@ -19,6 +20,7 @@ final class DoublyLinkedList implements IsList
     public function insert(int $index, mixed $element): void
     {
         $this->assertInsertIndex($index);
+        $this->assertElementType($element);
 
         $newNode = new DoublyNode($element);
 
@@ -59,14 +61,14 @@ final class DoublyLinkedList implements IsList
     {
         $this->assertElementIndex($index);
 
-        return $this->nodeAt($index)->value;
+        return $this->nodeAt($index)->data;
     }
 
     public function set(int $index, mixed $element): void
     {
         $this->assertElementIndex($index);
 
-        $this->nodeAt($index)->value = $element;
+        $this->nodeAt($index)->data = $element;
     }
 
     public function removeAt(int $index): mixed
@@ -99,7 +101,7 @@ final class DoublyLinkedList implements IsList
 
         $this->size--;
 
-        return $removedNode->value;
+        return $removedNode->data;
     }
 
     public function size(): int
@@ -161,6 +163,23 @@ final class DoublyLinkedList implements IsList
     {
         if ($index < 0 || $index > $this->size) {
             throw new \OutOfBoundsException("Index $index is out of bounds.");
+        }
+    }
+
+    /**
+     * Validates that the element matches the list's type.
+     * On first element, locks the list to that type.
+     */
+    private function assertElementType(mixed $element): void
+    {
+        $elementType = get_debug_type($element);
+
+        if ($this->elementType === null) {
+            $this->elementType = $elementType;
+        } elseif ($elementType !== $this->elementType) {
+            throw new \TypeError(
+                "List expects elements of type {$this->elementType}, got {$elementType}"
+            );
         }
     }
 }

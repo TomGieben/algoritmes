@@ -3,6 +3,7 @@
 use Algoritmes\Algoritmes\QuickSort;
 use Algoritmes\Algoritmes\LinkedList;
 use Algoritmes\Enums\SortDirection;
+use Algoritmes\Helpers\IntComparator;
 
 class QuickSortBench
 {
@@ -35,7 +36,7 @@ class QuickSortBench
      */
     public function benchBestCase()
     {
-        $sorter = new QuickSort($this->randomList);
+        $sorter = new QuickSort($this->randomList, new IntComparator());
         $sorter->sort(SortDirection::ASCENDING);
     }
 
@@ -46,7 +47,7 @@ class QuickSortBench
      */
     public function benchWorstCase()
     {
-        $sorter = new QuickSort($this->sortedList);
+        $sorter = new QuickSort($this->sortedList, new IntComparator());
         $sorter->sort(SortDirection::ASCENDING);
     }
 }

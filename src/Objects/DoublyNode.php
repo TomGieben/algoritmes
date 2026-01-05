@@ -4,12 +4,12 @@ namespace Algoritmes\Objects;
 
 class DoublyNode
 {
-    public mixed $value;
+    public mixed $data;
     public ?DoublyNode $next = null;
     public ?DoublyNode $prev = null;
 
-    public function __construct(mixed $value)
+    public function __construct(mixed $data)
     {
-        $this->value = $value;
+        $this->data = $data;
     }
 }

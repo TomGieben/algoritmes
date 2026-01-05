@@ -3,6 +3,7 @@
 use Algoritmes\Algoritmes\MergeSort;
 use Algoritmes\Algoritmes\LinkedList;
 use Algoritmes\Enums\SortDirection;
+use Algoritmes\Helpers\IntComparator;
 
 class MergeSortBench
 {
@@ -36,7 +37,7 @@ class MergeSortBench
      */
     public function benchBestCase()
     {
-        $sorter = new MergeSort($this->sortedList);
+        $sorter = new MergeSort($this->sortedList, new IntComparator());
         $sorter->sort(SortDirection::ASCENDING);
     }
 
@@ -49,7 +50,7 @@ class MergeSortBench
      */
     public function benchWorstCase()
     {
-        $sorter = new MergeSort($this->randomList);
+        $sorter = new MergeSort($this->randomList, new IntComparator());
         $sorter->sort(SortDirection::ASCENDING);
     }
 }
