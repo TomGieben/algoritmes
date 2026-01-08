@@ -30,7 +30,7 @@ final class Dijkstra implements IsShortestPathFinder
             // Bekijk alle buren van huidige node
             $neighbors = $graph->getNeighbors($u);
             for ($i = 0; $i < $neighbors->size(); $i++) {
-                $v = $neighbors->get($i);
+                $v = $neighbors->get($i); // Buur node
                 $weight = $graph->getWeight($u, $v);
                 if ($weight === null) continue;
 
