@@ -27,10 +27,10 @@ final class PriorityQueue
     {
         $prioritizedObject = new PrioritizedObject($value, $priority);
 
-        // Add to end of heap
+        // Voeg toe aan einde van heap
         $this->heap[] = $prioritizedObject;
 
-        // Restore heap property by bubbling up
+        // Herstel heap property door naar boven te bubblelen
         $this->heapifyUp(count($this->heap) - 1);
     }
 
@@ -40,15 +40,15 @@ final class PriorityQueue
             throw new \UnderflowException("Priority queue is empty");
         }
 
-        // Root has minimum priority
+        // Root heeft minimale prioriteit
         $min = $this->heap[0];
 
-        // Move last element to root
+        // Verplaats laatste element naar root
         $lastIndex = count($this->heap) - 1;
         $this->heap[0] = $this->heap[$lastIndex];
         array_pop($this->heap);
 
-        // Restore heap property by bubbling down
+        // Herstel heap property door naar beneden te bubblelen
         if (!empty($this->heap)) {
             $this->heapifyDown(0);
         }
@@ -84,12 +84,12 @@ final class PriorityQueue
         while ($index > 0) {
             $parentIndex = (int)(($index - 1) / 2);
 
-            // If current priority >= parent priority, heap property satisfied
+            // Als huidige prioriteit >= parent, heap property OK
             if ($this->heap[$index]->priority >= $this->heap[$parentIndex]->priority) {
                 break;
             }
 
-            // Swap with parent
+            // Swap met parent
             [$this->heap[$index], $this->heap[$parentIndex]] =
                 [$this->heap[$parentIndex], $this->heap[$index]];
 
@@ -110,7 +110,7 @@ final class PriorityQueue
             $rightChild = 2 * $index + 2;
             $smallest = $index;
 
-            // Find smallest among node and its children
+            // Vind kleinste van node en zijn children
             if (
                 $leftChild < $size &&
                 $this->heap[$leftChild]->priority < $this->heap[$smallest]->priority
@@ -125,12 +125,12 @@ final class PriorityQueue
                 $smallest = $rightChild;
             }
 
-            // If current node is smallest, heap property satisfied
+            // Als huidige node kleinste is, heap property OK
             if ($smallest === $index) {
                 break;
             }
 
-            // Swap with smallest child
+            // Swap met kleinste child
             [$this->heap[$index], $this->heap[$smallest]] =
                 [$this->heap[$smallest], $this->heap[$index]];
 

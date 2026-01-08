@@ -24,7 +24,7 @@ final class DoublyLinkedList implements IsList
 
         $newNode = new DoublyNode($element);
 
-        if ($index === 0) {
+        if ($index === 0) {  // Voeg toe aan begin
             $newNode->next = $this->head;
 
             if ($this->head !== null) {
@@ -34,7 +34,7 @@ final class DoublyLinkedList implements IsList
             }
 
             $this->head = $newNode;
-        } elseif ($index === $this->size) {
+        } elseif ($index === $this->size) {  // Voeg toe aan einde
             $newNode->prev = $this->tail;
 
             if ($this->tail !== null) {
@@ -44,7 +44,7 @@ final class DoublyLinkedList implements IsList
             }
 
             $this->tail = $newNode;
-        } else {
+        } else {  // Voeg toe in het midden
             $current = $this->nodeAt($index);
             $previous = $current->prev;
 
@@ -75,7 +75,7 @@ final class DoublyLinkedList implements IsList
     {
         $this->assertElementIndex($index);
 
-        if ($index === 0) {
+        if ($index === 0) {  // Verwijder eerste element
             $removedNode = $this->head;
             $this->head = $this->head->next;
 
@@ -84,7 +84,7 @@ final class DoublyLinkedList implements IsList
             } else {
                 $this->tail = null;
             }
-        } elseif ($index === $this->size - 1) {
+        } elseif ($index === $this->size - 1) {  // Verwijder laatste element
             $removedNode = $this->tail;
             $this->tail = $this->tail->prev;
 
@@ -93,7 +93,7 @@ final class DoublyLinkedList implements IsList
             } else {
                 $this->head = null;
             }
-        } else {
+        } else {  // Verwijder element in het midden
             $removedNode = $this->nodeAt($index);
             $removedNode->prev->next = $removedNode->next;
             $removedNode->next->prev = $removedNode->prev;
@@ -133,6 +133,7 @@ final class DoublyLinkedList implements IsList
     /** Returns the node at the requested index by walking from the closest end. */
     private function nodeAt(int $index): DoublyNode
     {
+        // Als index in eerste helft, loop vanaf begin
         if ($index <= $this->size / 2) {
             $current = $this->head;
 
@@ -143,6 +144,7 @@ final class DoublyLinkedList implements IsList
             return $current;
         }
 
+        // Anders loop vanaf einde (sneller!)
         $current = $this->tail;
 
         for ($i = $this->size - 1; $i > $index; $i--) {

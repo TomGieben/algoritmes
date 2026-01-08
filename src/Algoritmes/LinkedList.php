@@ -24,14 +24,14 @@ final class LinkedList implements IsList
 
         $newNode = new Node($element);
 
-        if ($index === 0) {
+        if ($index === 0) {  // Voeg toe aan begin
             $newNode->next = $this->head;
             $this->head = $newNode;
 
             if ($this->tail === null) {
                 $this->tail = $newNode;
             }
-        } elseif ($index === $this->size) {
+        } elseif ($index === $this->size) {  // Voeg toe aan einde
             if ($this->tail !== null) {
                 $this->tail->next = $newNode;
             }
@@ -40,7 +40,7 @@ final class LinkedList implements IsList
             if ($this->head === null) {
                 $this->head = $newNode;
             }
-        } else {
+        } else {  // Voeg toe in het midden
             $previous = $this->nodeAt($index - 1);
             $newNode->next = $previous->next;
             $previous->next = $newNode;
@@ -67,14 +67,14 @@ final class LinkedList implements IsList
     {
         $this->assertElementIndex($index);
 
-        if ($index === 0) {
+        if ($index === 0) {  // Verwijder eerste element
             $removedNode = $this->head;
             $this->head = $this->head->next;
 
             if ($this->head === null) {
                 $this->tail = null;
             }
-        } else {
+        } else {  // Verwijder element in midden of einde
             $previous = $this->nodeAt($index - 1);
             $removedNode = $previous->next;
             $previous->next = $removedNode->next;
@@ -119,6 +119,7 @@ final class LinkedList implements IsList
     {
         $current = $this->head;
 
+        // Loop vanaf head naar index
         for ($i = 0; $i < $index; $i++) {
             $current = $current->next;
         }

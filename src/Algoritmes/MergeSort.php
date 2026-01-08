@@ -20,10 +20,12 @@ final class MergeSort implements IsSorter
 
     public function sort(SortDirection $direction = SortDirection::ASCENDING): IsList
     {
+        // Base case: lijst van 0 of 1 element is al gesorteerd
         if ($this->list->size() <= 1) {
             return $this->list;
         }
 
+        // Splits lijst in twee helften
         $mid = (int)($this->list->size() / 2);
         $leftList = new LinkedList();
         $rightList = new LinkedList();
@@ -36,9 +38,11 @@ final class MergeSort implements IsSorter
             $rightList->add($this->list->get($i));
         }
 
+        // Recursief sorteer beide helften
         $leftSorter = new MergeSort($leftList, $this->comparator);
         $rightSorter = new MergeSort($rightList, $this->comparator);
 
+        // Voeg gesorteerde helften samen
         return $this->merge(
             $leftSorter->sort($direction),
             $rightSorter->sort($direction),
@@ -52,6 +56,7 @@ final class MergeSort implements IsSorter
         $i = 0;
         $j = 0;
 
+        // Vergelijk elementen van beide lijsten en voeg kleinste toe
         while ($i < $left->size() && $j < $right->size()) {
             $leftItem = $left->get($i);
             $rightItem = $right->get($j);
@@ -69,6 +74,7 @@ final class MergeSort implements IsSorter
             }
         }
 
+        // Voeg resterende elementen toe
         while ($i < $left->size()) {
             $mergedList->add($left->get($i));
             $i++;

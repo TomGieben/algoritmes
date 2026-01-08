@@ -20,13 +20,16 @@ final class QuickSort implements IsSorter
 
     public function sort(SortDirection $direction = SortDirection::ASCENDING): IsList
     {
+        // Converteer lijst naar array voor snellere bewerkingen
         $array = [];
         for ($i = 0; $i < $this->list->size(); $i++) {
             $array[] = $this->list->get($i);
         }
 
+        // Voer QuickSort uit (in-place sortering)
         $this->quickSort($array, 0, count($array) - 1, $direction);
 
+        // Converteer gesorteerde array terug naar lijst
         $sortedList = clone $this->list;
         for ($i = 0; $i < count($array); $i++) {
             $sortedList->set($i, $array[$i]);
@@ -38,8 +41,10 @@ final class QuickSort implements IsSorter
     private function quickSort(array &$array, int $low, int $high, SortDirection $direction): void
     {
         if ($low < $high) {
+            // Partition: splits array rond pivot
             $pi = $this->partition($array, $low, $high, $direction);
 
+            // Sorteer recursief linker en rechter deel
             $this->quickSort($array, $low, $pi - 1, $direction);
             $this->quickSort($array, $pi + 1, $high, $direction);
         }
@@ -47,18 +52,19 @@ final class QuickSort implements IsSorter
 
     private function partition(array &$array, int $low, int $high, SortDirection $direction): int
     {
-        $pivot = $array[$high];
-        $i = $low - 1;
+        $pivot = $array[$high];  // Kies laatste element als pivot
+        $i = $low - 1;  // Grens tussen kleiner/groter dan pivot
 
         for ($j = $low; $j < $high; $j++) {
             $comparison = $this->comparator->compare($array[$j], $pivot);
             $compare = ($direction === SortDirection::ASCENDING) ? ($comparison < 0) : ($comparison > 0);
             if ($compare) {
                 $i++;
-                [$array[$i], $array[$j]] = [$array[$j], $array[$i]];
+                [$array[$i], $array[$j]] = [$array[$j], $array[$i]];  // Swap naar linker sectie
             }
         }
 
+        // Plaats pivot op finale positie
         [$array[$i + 1], $array[$high]] = [$array[$high], $array[$i + 1]];
         return $i + 1;
     }

@@ -21,18 +21,18 @@ final class BinarySearch implements IsSearch
         $right = $list->size() - 1;
 
         while ($left <= $right) {
-            $mid = intdiv($left + $right, 2);
+            $mid = intdiv($left + $right, 2);  // Bereken midden index
             $comparison = $this->comparator->compare($list->get($mid), $target);
 
             if ($comparison === 0) {
-                return $mid;
+                return $mid;  // Gevonden!
             } elseif ($comparison < 0) {
-                $left = $mid + 1;
+                $left = $mid + 1;  // Zoek in rechter helft
             } else {
-                $right = $mid - 1;
+                $right = $mid - 1;  // Zoek in linker helft
             }
         }
 
-        return -1;
+        return -1;  // Niet gevonden
     }
 }

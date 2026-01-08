@@ -12,27 +12,33 @@ final class Dijkstra implements IsShortestPathFinder
 {
     public function findShortestPath(IsGraph $graph, mixed $start, mixed $end): ?array
     {
-        $distances = new HashTable();
-        $previous = new HashTable();
-        $pq = new PriorityQueue();
+        $distances = new HashTable();  // Afstanden van start naar elke node
+        $previous = new HashTable();   // Vorige node in kortste pad
+        $pq = new PriorityQueue();     // Te bezoeken nodes (min-heap)
 
+        // Start met afstand 0 naar startnode
         $distances->set($start, 0.0);
         $pq->enqueue($start, 0.0);
 
         while ($pq->size() > 0) {
-            $u = $pq->dequeue();
+            $u = $pq->dequeue();  // Node met kleinste afstand
 
             if ($u === $end) {
-                break; // optional optimization
+                break;  // Eindnode bereikt
             }
 
+            // Bekijk alle buren van huidige node
             $neighbors = $graph->getNeighbors($u);
             for ($i = 0; $i < $neighbors->size(); $i++) {
                 $v = $neighbors->get($i);
                 $weight = $graph->getWeight($u, $v);
                 if ($weight === null) continue;
+
+                // Bereken afstand via huidige node
                 $alt = ($distances->has($u) ? $distances->get($u) : PHP_FLOAT_MAX) + $weight;
                 $currentDist = $distances->has($v) ? $distances->get($v) : PHP_FLOAT_MAX;
+
+                // Update als korter pad gevonden
                 if ($alt < $currentDist) {
                     $distances->set($v, $alt);
                     $previous->set($v, $u);
@@ -42,14 +48,15 @@ final class Dijkstra implements IsShortestPathFinder
         }
 
         if (!$distances->has($end) || $distances->get($end) === PHP_FLOAT_MAX) {
-            return null;
+            return null;  // Geen pad gevonden
         }
 
+        // Reconstrueer pad van end naar start
         $path = new LinkedList();
         $current = $end;
 
         while ($current !== null) {
-            $path->insert(0, $current);
+            $path->insert(0, $current);  // Voeg toe aan begin
             $current = $previous->has($current) ? $previous->get($current) : null;
         }
 
