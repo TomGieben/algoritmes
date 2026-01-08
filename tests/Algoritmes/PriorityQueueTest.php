@@ -14,7 +14,7 @@ class PriorityQueueTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->pq = new PriorityQueue(new LinkedList());
+        $this->pq = new PriorityQueue();
         $this->primes = CsvLoader::loadColumnToArray('storage/1m.csv', 1, true);
         // Take first 1000 for faster
         $this->primes = array_slice($this->primes, 0, 1000);

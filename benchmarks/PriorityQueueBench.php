@@ -1,7 +1,6 @@
 <?php
 
 use Algoritmes\Algoritmes\PriorityQueue;
-use Algoritmes\Algoritmes\LinkedList;
 
 class PriorityQueueBench
 {
@@ -10,7 +9,7 @@ class PriorityQueueBench
 
     public function setUp()
     {
-        $this->queue = new PriorityQueue(new LinkedList());
+        $this->queue = new PriorityQueue();
         // Fill with priorities 0 to 999
         for ($i = 0; $i < $this->size; $i++) {
             $this->queue->enqueue("item_$i", $i);
@@ -18,7 +17,8 @@ class PriorityQueueBench
     }
 
     /**
-     * Best Case: Enqueue item with priority lower than all existing (inserted at start).
+     * Best Case: Enqueue item with priority lower than all existing.
+     * With binary heap, this is still O(log n) but from root.
      * 
      * @Revs(1000)
      * @Iterations(5)
@@ -26,14 +26,13 @@ class PriorityQueueBench
      */
     public function benchBestCase()
     {
-        // Priority -1 is smaller than 0, so it should be inserted at index 0.
-        // The loop `while ($index < $this->list->size())` checks `if ($priority < $current->priority)`
-        // -1 < 0 is true immediately. Break. Insert at 0.
+        // Priority -1 is smaller than all, will bubble up from leaf to root
         $this->queue->enqueue("best", -1);
     }
 
     /**
-     * Worst Case: Enqueue item with priority higher than all existing (inserted at end).
+     * Worst Case: Enqueue item with priority higher than all existing.
+     * With binary heap, stays at leaf level (minimal bubbling).
      * 
      * @Revs(1000)
      * @Iterations(5)
@@ -41,8 +40,7 @@ class PriorityQueueBench
      */
     public function benchWorstCase()
     {
-        // Priority 2000 is larger than all existing (max 999).
-        // Loop runs through entire list.
+        // Priority 2000 is larger than all, minimal heap adjustments
         $this->queue->enqueue("worst", 2000);
     }
 }

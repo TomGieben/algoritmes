@@ -14,7 +14,7 @@ final class Dijkstra implements IsShortestPathFinder
     {
         $distances = new HashTable();
         $previous = new HashTable();
-        $pq = new PriorityQueue(new LinkedList());
+        $pq = new PriorityQueue();
 
         $distances->set($start, 0.0);
         $pq->enqueue($start, 0.0);
@@ -73,7 +73,7 @@ final class Dijkstra implements IsShortestPathFinder
         for ($i = 0; $i < $result['path']->size(); $i++) {
             $path[] = $result['path']->get($i);
         }
-        
+
         return ['path' => $path, 'distance' => $result['distance']];
     }
 }
