@@ -5,18 +5,7 @@ namespace Algoritmes\Algoritmes;
 use Algoritmes\Interfaces\IsComparator;
 use Algoritmes\Objects\BinaryNode;
 
-/**
- * Binary Search Tree implementatie volgens school specificaties.
- * 
- * Eigenschappen:
- * - Elke node is een key naar een item
- * - Nodes in left subtree bevatten kleinere keys
- * - Nodes in right subtree bevatten grotere keys
- * - Elke key komt maar één keer voor
- * 
- * Operaties: find, findMin, findMax, insert, remove
- * Runtime: O(log N) voor balanced tree, O(N) worst case
- */
+
 final class BinarySearchTree
 {
     private ?BinaryNode $root = null;
@@ -28,18 +17,11 @@ final class BinarySearchTree
         $this->comparator = $comparator;
     }
 
-    /**
-     * Voeg een waarde toe aan de tree.
-     * Duplicate values worden genegeerd (zoals school specificatie).
-     */
     public function insert(mixed $value): void
     {
         $this->root = $this->insertRecursive($this->root, $value);
     }
 
-    /**
-     * Recursive helper voor insert operatie.
-     */
     private function insertRecursive(?BinaryNode $node, mixed $value): BinaryNode
     {
         // Base case: lege positie gevonden
@@ -62,18 +44,11 @@ final class BinarySearchTree
         return $node;
     }
 
-    /**
-     * Zoek een waarde in de tree.
-     * Returns de node als gevonden, null als niet gevonden.
-     */
     public function find(mixed $value): ?BinaryNode
     {
         return $this->findRecursive($this->root, $value);
     }
 
-    /**
-     * Recursive helper voor find operatie.
-     */
     private function findRecursive(?BinaryNode $node, mixed $value): ?BinaryNode
     {
         // Base case: niet gevonden of gevonden
@@ -92,10 +67,6 @@ final class BinarySearchTree
         }
     }
 
-    /**
-     * Vind de minimale waarde in de tree.
-     * Returns null als tree leeg is.
-     */
     public function findMin(): mixed
     {
         if ($this->root === null) {
@@ -109,10 +80,6 @@ final class BinarySearchTree
         return $node->value;
     }
 
-    /**
-     * Vind de maximale waarde in de tree.
-     * Returns null als tree leeg is.
-     */
     public function findMax(): mixed
     {
         if ($this->root === null) {
@@ -126,21 +93,10 @@ final class BinarySearchTree
         return $node->value;
     }
 
-    /**
-     * Verwijder een waarde uit de tree.
-     * Implementeert de 3 cases:
-     * 1. Geen kinderen (leaf): verwijder node
-     * 2. Één kind: vervang door kind
-     * 3. Twee kinderen: vervang door kleinste waarde in right subtree
-     */
     public function remove(mixed $value): void
     {
         $this->root = $this->removeRecursive($this->root, $value);
     }
-
-    /**
-     * Recursive helper voor remove operatie.
-     */
     private function removeRecursive(?BinaryNode $node, mixed $value): ?BinaryNode
     {
         if ($node === null) {
@@ -190,9 +146,6 @@ final class BinarySearchTree
         return $node;
     }
 
-    /**
-     * Helper: vind de node met minimale waarde in een subtree.
-     */
     private function findMinNode(BinaryNode $node): BinaryNode
     {
         while ($node->left !== null) {
@@ -201,10 +154,6 @@ final class BinarySearchTree
         return $node;
     }
 
-    /**
-     * In-order traversal: left, node, right
-     * Geeft gesorteerde volgorde voor BST.
-     */
     public function inOrder(): array
     {
         $result = [];
@@ -223,10 +172,6 @@ final class BinarySearchTree
         $this->inOrderRecursive($node->right, $result);
     }
 
-    /**
-     * Pre-order traversal: node, left, right
-     * Geschikt voor copying trees.
-     */
     public function preOrder(): array
     {
         $result = [];
@@ -245,10 +190,6 @@ final class BinarySearchTree
         $this->preOrderRecursive($node->right, $result);
     }
 
-    /**
-     * Post-order traversal: left, right, node
-     * Geschikt voor deleting trees.
-     */
     public function postOrder(): array
     {
         $result = [];
@@ -267,35 +208,22 @@ final class BinarySearchTree
         $result[] = $node->value;
     }
 
-    /**
-     * Aantal nodes in de tree.
-     */
     public function size(): int
     {
         return $this->size;
     }
 
-    /**
-     * Check of tree leeg is.
-     */
     public function isEmpty(): bool
     {
         return $this->size === 0;
     }
 
-    /**
-     * Verwijder alle nodes uit de tree.
-     */
     public function clear(): void
     {
         $this->root = null;
         $this->size = 0;
     }
 
-    /**
-     * Bereken de hoogte van de tree.
-     * Empty tree heeft hoogte -1, single node heeft hoogte 0.
-     */
     public function height(): int
     {
         return $this->heightRecursive($this->root);
